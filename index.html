@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>櫻坂46 Members</title>
+    <script>
+      try {
+        const navigationEntry = performance.getEntriesByType("navigation")[0];
+        const isReload =
+          navigationEntry?.type === "reload" ||
+          performance.navigation?.type === performance.navigation?.TYPE_RELOAD;
+
+        if (!isReload && sessionStorage.getItem("zaka-home-loader-seen") === "true") {
+          document.documentElement.classList.add("loader-seen");
+        }
+      } catch (error) {
+        document.documentElement.classList.add("loader-seen");
+      }
+    </script>
+    <link rel="stylesheet" href="./home.css" />
+  </head>
+  <body data-page-title="titles.home">
+    <div id="loader" class="loader" aria-label="载入中" data-i18n-aria-label="home.loading">
+      <div class="loader-stage is-active" data-loader-stage="keyaki">
+        <img
+          class="loader-logo keyaki-logo"
+          src="https://upload.wikimedia.org/wikipedia/commons/f/f8/Keyakizaka46_logo.svg"
+          alt="欅坂46"
+        />
+        <span class="loader-fallback">欅坂46</span>
+      </div>
+      <div class="loader-stage" data-loader-stage="sakura">
+        <img class="loader-logo sakura-logo" src="./assets/brand/sakurazaka-logo.png" alt="櫻坂46" />
+      </div>
+    </div>
+
+    <main id="home" class="home-shell" aria-label="櫻坂46 首页" data-i18n-aria-label="home.shell">
+      <section class="member-stage" aria-label="成员照片卡" data-i18n-aria-label="home.memberStage">
+        <div id="memberGrid" class="member-grid" aria-label="成员照片卡" data-i18n-aria-label="home.memberGrid"></div>
+      </section>
+      <div class="arrangement-switch" aria-label="排列方式" data-i18n-aria-label="home.arrangement">
+        <button class="arrangement-btn is-active" type="button" data-arrangement="center" data-i18n="home.activeArrangement">现役</button>
+        <button class="arrangement-btn" type="button" data-arrangement="generation" data-i18n="home.generationArrangement">期别</button>
+      </div>
+    </main>
+
+    <template id="memberCardTemplate">
+      <button class="member-card" type="button">
+        <span class="photo-slot" aria-hidden="true"></span>
+      </button>
+    </template>
+
+    <div id="memberModal" class="member-modal" aria-hidden="true">
+      <article class="member-modal-card" role="dialog" aria-modal="true" aria-labelledby="memberModalName">
+        <button class="member-modal-close" type="button" aria-label="关闭成员资料" data-i18n-aria-label="member.closeProfile">×</button>
+        <figure class="member-modal-photo-frame">
+          <img id="memberModalPhoto" class="member-modal-photo" alt="" decoding="async" />
+        </figure>
+        <div class="member-modal-info">
+          <p id="memberModalGeneration" class="member-modal-generation"></p>
+          <h2 id="memberModalName"></h2>
+          <p id="memberModalRomaji" class="member-modal-romaji"></p>
+          <dl class="member-modal-data">
+            <div>
+              <dt data-i18n="member.birthday">生日</dt>
+              <dd id="memberModalBirthday"></dd>
+            </div>
+            <div>
+              <dt data-i18n="member.birthplace">出生地</dt>
+              <dd id="memberModalBirthplace"></dd>
+            </div>
+            <div>
+              <dt data-i18n="member.centers">C位曲</dt>
+              <dd id="memberModalCenters" class="member-modal-centers"></dd>
+            </div>
+          </dl>
+        </div>
+      </article>
+    </div>
+
+    <button id="languageSwitch" class="language-switch" type="button"></button>
+
+    <script src="./i18n.js"></script>
+    <script src="./home.js"></script>
+  </body>
+</html>

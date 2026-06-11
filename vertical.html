@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>欅坂46 / 櫻坂46 竖版时间轴</title>
+    <link rel="stylesheet" href="./vertical.css" />
+  </head>
+  <body data-page-title="titles.timelineVertical">
+    <div class="page-bg page-bg-current" aria-hidden="true"></div>
+    <div class="page-bg page-bg-next" aria-hidden="true"></div>
+
+    <header class="vertical-header">
+      <button class="jump-btn keyaki" type="button" data-jump="keyaki" aria-label="跳到欅坂46部分" data-i18n-aria-label="timeline.jumpKeyaki">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f8/Keyakizaka46_logo.svg" alt="欅坂46" />
+      </button>
+      <h1 data-i18n="timeline.title">欅坂46から櫻坂46へ</h1>
+      <button class="jump-btn sakura" type="button" data-jump="sakura" aria-label="跳到櫻坂46部分" data-i18n-aria-label="timeline.jumpSakura">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Sakurazaka46_logo.svg" alt="櫻坂46" />
+      </button>
+    </header>
+
+    <main id="verticalTimeline" class="vertical-timeline" aria-label="竖版时间轴" data-i18n-aria-label="timeline.verticalShell"></main>
+
+    <a class="home-switch" href="./index.html" aria-label="返回首页" data-i18n-aria-label="timeline.backHome" data-i18n="common.home">首页</a>
+    <div class="corner-actions">
+      <a class="view-switch" href="./timeline.html" aria-label="切换到横版" data-i18n-aria-label="timeline.switchHorizontal" data-i18n="common.horizontal">横版</a>
+      <button id="languageSwitch" class="language-switch" type="button"></button>
+    </div>
+
+    <template id="eventTemplate">
+      <article class="event-row">
+        <div class="event-info"></div>
+        <span class="event-dot" aria-hidden="true"></span>
+        <div class="event-covers"></div>
+      </article>
+    </template>
+
+    <div id="coverModal" class="cover-modal" aria-hidden="true">
+      <button class="cover-modal-close" type="button" aria-label="关闭封面预览" data-i18n-aria-label="common.closeCover">×</button>
+      <img id="coverModalImage" alt="" />
+    </div>
+
+    <script src="./i18n.js"></script>
+    <script src="./vertical.js"></script>
+  </body>
+</html>

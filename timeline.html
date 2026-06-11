@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>欅坂46 / 櫻坂46 横版时间轴</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-page-title="titles.timelineHorizontal">
+    <div class="page-bg page-bg-current" aria-hidden="true"></div>
+    <div class="page-bg page-bg-next" aria-hidden="true"></div>
+
+    <header class="topbar" aria-label="页面导航" data-i18n-aria-label="timeline.nav">
+      <button class="jump-btn keyaki" type="button" data-jump="keyaki" aria-label="跳到欅坂46部分" data-i18n-aria-label="timeline.jumpKeyaki">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f8/Keyakizaka46_logo.svg" alt="欅坂46" />
+      </button>
+      <h1 id="pageTitle" data-i18n="timeline.title">欅坂46から櫻坂46へ</h1>
+      <button class="jump-btn sakura" type="button" data-jump="sakura" aria-label="跳到櫻坂46部分" data-i18n-aria-label="timeline.jumpSakura">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/7/7a/Sakurazaka46_logo.svg" alt="櫻坂46" />
+      </button>
+    </header>
+
+    <main>
+      <section class="intro" aria-labelledby="pageTitle">
+        <p class="kicker" data-i18n="timeline.dateRange">2015 - present</p>
+        <p class="intro-copy" data-i18n="timeline.intro">按现实日期比例排列：上方是单曲与封面位，下方是收录曲、加入、毕业和改名等成员事件。</p>
+      </section>
+
+      <section class="timeline-shell" aria-label="欅坂46与櫻坂46时间轴" data-i18n-aria-label="timeline.shell">
+        <div id="timeline" class="timeline" tabindex="0">
+          <div id="timelineTrack" class="timeline-track">
+            <div class="axis" aria-hidden="true"></div>
+            <div id="yearTicks" class="year-ticks" aria-hidden="true"></div>
+            <div id="dotLayer" class="dot-layer"></div>
+            <div id="liveBarLayer" class="live-bar-layer"></div>
+            <div id="liveLayer" class="live-layer"></div>
+            <div id="releaseLayer" class="release-layer"></div>
+            <div id="songLayer" class="song-layer"></div>
+            <div id="memberLayer" class="member-layer"></div>
+          </div>
+        </div>
+      </section>
+
+      <div class="zoom-panel" aria-label="时间轴缩放" data-i18n-aria-label="timeline.zoom">
+        <button class="icon-btn" type="button" data-zoom-step="-0.1" aria-label="缩小" data-i18n-aria-label="timeline.zoomOut">−</button>
+        <input id="zoomRange" type="range" min="0.15" max="5" step="0.05" value="5" aria-label="缩放比例" data-i18n-aria-label="timeline.zoomRange" />
+        <button class="icon-btn" type="button" data-zoom-step="0.1" aria-label="放大" data-i18n-aria-label="timeline.zoomIn">+</button>
+        <output id="zoomValue" for="zoomRange">500%</output>
+      </div>
+
+      <section class="sources" aria-labelledby="sourcesTitle">
+        <h2 id="sourcesTitle" data-i18n="timeline.sources">资料来源</h2>
+        <p>
+          <span data-i18n="timeline.sourcesBefore">发行日与版本：欅坂46、櫻坂46 官方 Discography。成员加入、毕业与人数变迁：</span>
+          <a href="https://zh.wikipedia.org/wiki/%E6%AB%BB%E5%9D%8246" data-i18n="timeline.wikiEntry">维基百科「櫻坂46」条目</a><span data-i18n="timeline.sourcesAfter">。收录曲：维基百科单曲条目为主，最新单曲辅以官方新闻与音乐新闻页面核对。大型演出日期参考官方新闻、官方演出页面与维基百科演唱会相关条目。</span>
+        </p>
+      </section>
+    </main>
+
+    <a class="home-switch" href="./index.html" aria-label="返回首页" data-i18n-aria-label="timeline.backHome" data-i18n="common.home">首页</a>
+    <div class="corner-actions">
+      <a class="view-switch" href="./vertical.html" aria-label="切换到竖版" data-i18n-aria-label="timeline.switchVertical" data-i18n="common.vertical">竖版</a>
+      <button id="languageSwitch" class="language-switch" type="button"></button>
+    </div>
+
+    <template id="releaseTemplate">
+      <article class="release-card">
+        <div class="covers" aria-label="封面版本" data-i18n-aria-label="timeline.covers">
+          <div class="cover-slot type-a">Type-A</div>
+          <div class="cover-slot type-d">Type-D</div>
+          <div class="cover-slot type-b">Type-B</div>
+          <div class="cover-slot regular" data-cover-label="regular">通常盤</div>
+          <div class="cover-slot type-c">Type-C</div>
+          <div class="cover-slot limited empty" aria-hidden="true" data-cover-label="limited">限定盤</div>
+        </div>
+      </article>
+    </template>
+
+    <template id="songTemplate">
+      <article class="song-block">
+        <time class="event-date"></time>
+        <h2></h2>
+        <ol class="tracks"></ol>
+      </article>
+    </template>
+
+    <template id="memberTemplate">
+      <article class="member-event">
+        <time class="event-date"></time>
+        <p></p>
+      </article>
+    </template>
+
+    <template id="liveTemplate">
+      <article class="live-event">
+        <time class="event-date"></time>
+        <p></p>
+      </article>
+    </template>
+
+    <template id="albumTemplate">
+      <article class="album-event">
+        <time class="event-date"></time>
+        <h2></h2>
+      </article>
+    </template>
+
+    <template id="albumCoverTemplate">
+      <article class="album-cover-card">
+        <div class="album-covers" aria-label="专辑封面版本" data-i18n-aria-label="timeline.albumCovers">
+          <div class="cover-slot">Type-A</div>
+          <div class="cover-slot">Type-B</div>
+          <div class="cover-slot" data-cover-label="regular">通常盤</div>
+        </div>
+      </article>
+    </template>
+
+    <template id="liveBarTemplate">
+      <div class="live-span" aria-hidden="true"></div>
+    </template>
+
+    <template id="dotTemplate">
+      <span class="event-dot" aria-hidden="true"></span>
+    </template>
+
+    <div id="coverModal" class="cover-modal" aria-hidden="true">
+      <button class="cover-modal-close" type="button" aria-label="关闭封面预览" data-i18n-aria-label="common.closeCover">×</button>
+      <img id="coverModalImage" alt="" />
+    </div>
+
+    <script src="./i18n.js"></script>
+    <script src="./script.js"></script>
+  </body>
+</html>
