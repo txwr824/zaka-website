@@ -109,6 +109,8 @@
       liveEvents: {
         budokan: "武道馆之变：因平手友梨奈受伤，けやき坂46 代替欅坂46出演日本武道馆3Days",
         stadium: "櫻坂46 5th YEAR ANNIVERSARY LIVE MUFGスタジアム（国立竞技场）",
+        arenaTour2026: "Sakurazaka46 ARENA TOUR 2026 -What’s lonesome?-",
+        anniversary6: "櫻坂46「6th YEAR ANNIVERSARY LIVE」＠ZOZO Marine Stadium",
       },
       memberEvents: {
         m20150821:
@@ -151,6 +153,7 @@
           "櫻坂46 四期生加入：浅井恋乃未、稲熊ひな、勝又春、佐藤愛桜、中川智尋、松本和子、目黒陽色、山川宇衣、山田桃実（櫻坂46：33人）。",
         m20260228: "井上梨名毕业（櫻坂46：32人）。",
         m20260513: "武元唯衣毕业（櫻坂46：31人）。",
+        m20260930: "増本綺良毕业（櫻坂46：30人）。",
       },
     },
     ja: {
@@ -254,6 +257,8 @@
       liveEvents: {
         budokan: "武道館の変：平手友梨奈の負傷により、けやき坂46が欅坂46に代わって日本武道館3Daysに出演",
         stadium: "櫻坂46 5th YEAR ANNIVERSARY LIVE MUFGスタジアム（国立競技場）",
+        arenaTour2026: "Sakurazaka46 ARENA TOUR 2026 -What’s lonesome?-",
+        anniversary6: "櫻坂46「6th YEAR ANNIVERSARY LIVE」＠ZOZOマリンスタジアム",
       },
       memberEvents: {
         m20150821:
@@ -296,6 +301,7 @@
           "櫻坂46 四期生が加入：浅井恋乃未、稲熊ひな、勝又春、佐藤愛桜、中川智尋、松本和子、目黒陽色、山川宇衣、山田桃実（櫻坂46：33人）。",
         m20260228: "井上梨名が卒業（櫻坂46：32人）。",
         m20260513: "武元唯衣が卒業（櫻坂46：31人）。",
+        m20260930: "増本綺良が卒業（櫻坂46：30人）。",
       },
     },
     en: {
@@ -401,6 +407,8 @@
         budokan:
           "Budokan change: after Hirate Yurina's injury, Hiragana Keyakizaka46 performed the Nippon Budokan 3 Days in place of Keyakizaka46",
         stadium: "Sakurazaka46 5th YEAR ANNIVERSARY LIVE, MUFG Stadium (Japan National Stadium)",
+        arenaTour2026: "Sakurazaka46 ARENA TOUR 2026 -What’s lonesome?-",
+        anniversary6: "Sakurazaka46 “6th YEAR ANNIVERSARY LIVE” @ ZOZO Marine Stadium",
       },
       memberEvents: {
         m20150821:
@@ -443,6 +451,7 @@
           "Sakurazaka46 4th generation joined: Asai Konomi, Inaguma Hina, Katsumata Haru, Sato Neo, Nakagawa Chihiro, Matsumoto Wako, Meguro Hiiro, Yamakawa Ui, Yamada Momomi (Sakurazaka46: 33 members).",
         m20260228: "Inoue Rina graduated (Sakurazaka46: 32 members).",
         m20260513: "Takemoto Yui graduated (Sakurazaka46: 31 members).",
+        m20260930: "Masumoto Kira graduated (Sakurazaka46: 30 members).",
       },
     },
   };

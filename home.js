@@ -48,6 +48,7 @@ const activeFourthGeneration = [
 
 const formerMembers = [
   ["武元 唯衣", "Takemoto Yui", "2期生"],
+  ["増本 綺良", "Masumoto Kira", "2期生"],
   ["井上 梨名", "Inoue Rina", "2期生"],
   ["小池 美波", "Koike Minami", "1期生"],
   ["上村 莉菜", "Uemura Rina", "1期生"],
@@ -81,7 +82,9 @@ function toMember([name, romaji, generation], index, prefix = "member") {
   return { name, romaji, generation, id: `${prefix}-${index}` };
 }
 
-const activeSecondMembers = activeSecondGeneration.map((item, index) => toMember(item, index, "active-2"));
+const activeSecondMembers = activeSecondGeneration
+  .map((item, index) => toMember(item, index, "active-2"))
+  .filter((member) => !formerMembers.some((former) => former.name === member.name));
 const activeThirdMembers = activeThirdGeneration.map((item, index) => toMember(item, index, "active-3"));
 const activeFourthMembers = activeFourthGeneration.map((item, index) => toMember(item, index, "active-4"));
 const activeMembers = [...activeSecondMembers, ...activeThirdMembers, ...activeFourthMembers];
@@ -666,7 +669,12 @@ function renderMemberPhoto(profile) {
 
   memberModalPhotoFrame.classList.remove("is-empty");
   memberModalPhoto.hidden = false;
-  memberModalPhoto.src = profile.photo;
+  window.loadLocalImage(memberModalPhoto, profile.photo, () => {
+    memberModalPhotoFrame.classList.add("is-empty");
+    memberModalPhoto.hidden = true;
+    memberModalPhoto.removeAttribute("src");
+    memberModalPhoto.alt = "";
+  });
   memberModalPhoto.alt = `${profile.name} ${textFor("member.officialPhoto")}`;
 }
 
@@ -694,13 +702,6 @@ function closeMemberProfile() {
   memberModal.classList.remove("is-open");
   memberModal.setAttribute("aria-hidden", "true");
 }
-
-memberModalPhoto.addEventListener("error", () => {
-  memberModalPhotoFrame.classList.add("is-empty");
-  memberModalPhoto.hidden = true;
-  memberModalPhoto.removeAttribute("src");
-  memberModalPhoto.alt = "";
-});
 
 function coordinateKey(row, column) {
   return `${row}:${column}`;
@@ -761,7 +762,7 @@ function getCenterMemberOrder() {
 
   const orderedMembers = uniqueMembers([
     ...requestedCore,
-    ...activeSecondMembers,
+    ...activeSecondGeneration.map(([name]) => memberByCompactName(name)),
     ...activeThirdMembers,
     ...activeFourthMembers,
     formerMembers[0],
@@ -868,7 +869,8 @@ function getOuterFormerCoordinates(currentLayout) {
 function assignCenterArrangement(currentLayout) {
   const assignments = new Map();
   const orderedMembers = getCenterMemberOrder();
-  const outerMembers = formerMembers.slice(1);
+  const centerMemberIds = new Set(orderedMembers.map((member) => member.id));
+  const outerMembers = formerMembers.filter((member) => !centerMemberIds.has(member.id));
 
   getCenterCoordinates(currentLayout).forEach(({ row, column }, index) => {
     assignments.set(coordinateKey(row, column), orderedMembers[index]);
@@ -878,7 +880,49 @@ function assignCenterArrangement(currentLayout) {
     assignments.set(coordinateKey(row, column), outerMembers[index]);
   });
 
+  moveGraduatesBesideTakemoto(assignments, currentLayout);
   return assignments;
+}
+
+function moveGraduatesBesideTakemoto(assignments, currentLayout) {
+  const graduate = memberByCompactName("増本綺良");
+  const anchor = memberByCompactName("武元唯衣");
+  const bottom = currentLayout.activeRowStart + currentLayout.activeRows - 1;
+  const left = currentLayout.activeColumnStart;
+  const right = left + currentLayout.activeColumns - 1;
+  const top = currentLayout.activeRowStart;
+  const anchorKey = coordinateKey(bottom, right);
+  const targetKey = coordinateKey(bottom, right - 1);
+
+  // The compact layout has fewer visible slots; reserve its last two for graduates.
+  if (currentLayout.columns < 11) {
+    const members = orderedActiveMembers();
+    getCenterCoordinates(currentLayout).forEach(({ row, column }) => {
+      const key = coordinateKey(row, column);
+      if (key !== anchorKey && key !== targetKey) assignments.set(key, members.shift());
+    });
+    assignments.set(anchorKey, anchor);
+    assignments.set(targetKey, graduate);
+    return;
+  }
+
+  const sourceKey = [...assignments].find(([, member]) => member?.id === graduate.id)?.[0];
+  if (!sourceKey || sourceKey === targetKey) return;
+  let [row, column] = sourceKey.split(":").map(Number);
+  const path = [sourceKey];
+  // Follow the counterclockwise edge from the vacated card to the new position.
+  while (row > top) path.push(coordinateKey(--row, column));
+  while (column > left) path.push(coordinateKey(row, --column));
+  while (row < bottom) path.push(coordinateKey(++row, column));
+  while (column < right - 1) path.push(coordinateKey(row, ++column));
+  for (let index = 0; index < path.length - 1; index += 1) {
+    assignments.set(path[index], assignments.get(path[index + 1]));
+  }
+  assignments.set(targetKey, graduate);
+}
+
+function orderedActiveMembers() {
+  return getCenterMemberOrder().filter((member) => !member.id.startsWith("former"));
 }
 
 function assignGenerationArrangement(currentLayout) {

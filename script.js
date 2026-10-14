@@ -165,6 +165,12 @@ const releases = [
     tracks: ["Lonesome rabbit", "What's “KAZOKU”?", "コインランドリー", "We got your back", "狼たちよ", "各駅停車", "恵まれ過ぎて"],
     limitedCover: true,
   },
+  {
+    era: "sakura",
+    date: "2026-10-14",
+    title: "愛MUST BE",
+    tracks: ["愛MUST BE", "元凶", "自称バレエダンサー", "アベセン", "1mmも飛ばない鳥", "あの日の私で", "I’m the law"],
+  },
 ];
 
 const releaseItems = releases.map((item, index) => ({
@@ -206,6 +212,7 @@ const memberEvents = [
   { date: "2025-04-16", kind: "member", textKey: "memberEvents.m20250416" },
   { date: "2026-02-28", kind: "member", textKey: "memberEvents.m20260228" },
   { date: "2026-05-13", kind: "member", textKey: "memberEvents.m20260513" },
+  { date: "2026-09-30", kind: "member", textKey: "memberEvents.m20260930" },
 ];
 
 const memberItems = memberEvents.map((item, index) => ({
@@ -239,6 +246,8 @@ const liveEvents = [
   { start: "2024-11-23", end: "2024-11-24", title: "櫻坂46 4th YEAR ANNIVERSARY LIVE" },
   { start: "2025-04-26", end: "2025-08-24", title: "櫻坂46 5th TOUR 2025 Addiction" },
   { start: "2026-04-11", end: "2026-04-12", titleKey: "liveEvents.stadium" },
+  { start: "2026-07-23", end: "2026-08-30", titleKey: "liveEvents.arenaTour2026" },
+  { start: "2026-11-14", end: "2026-11-15", titleKey: "liveEvents.anniversary6", hasPreview: false },
 ];
 
 const liveItems = liveEvents.map((item, index) => ({
@@ -285,7 +294,7 @@ const bgCurrent = document.querySelector(".page-bg-current");
 const bgNext = document.querySelector(".page-bg-next");
 
 const startDate = new Date("2015-08-01T00:00:00");
-const endDate = new Date("2026-07-01T00:00:00");
+const endDate = new Date("2026-12-01T00:00:00");
 const dayMs = 24 * 60 * 60 * 1000;
 const basePixelsPerDay = 2.35;
 const edgePadding = 260;
@@ -357,7 +366,6 @@ function compactDate(date) {
 
 function loadCover(slot, src, alt) {
   const image = new Image();
-  image.src = src;
   image.alt = alt;
   image.addEventListener("pointerdown", (event) => event.stopPropagation());
   image.addEventListener("click", (event) => {
@@ -369,10 +377,13 @@ function loadCover(slot, src, alt) {
     slot.textContent = "";
     slot.appendChild(image);
   };
+  window.loadLocalImage(image, src);
 }
 
-function openCoverModal(src, alt) {
-  coverModalImage.src = src;
+function openCoverModal(src, alt, fallbackSrc) {
+  window.loadLocalImage(coverModalImage, src, () => {
+    if (fallbackSrc) window.loadLocalImage(coverModalImage, fallbackSrc);
+  });
   coverModalImage.alt = alt;
   coverModal.classList.add("is-open");
   coverModal.setAttribute("aria-hidden", "false");
@@ -391,7 +402,7 @@ function attachLivePreview(target, event) {
   target.addEventListener("click", (clickEvent) => {
     clickEvent.preventDefault();
     clickEvent.stopPropagation();
-    openCoverModal(src, eventTitle(event));
+    openCoverModal(src, eventTitle(event), `assets/covers/${compactDate(event.end)}-live.jpg`);
   });
 }
 
@@ -621,9 +632,9 @@ function createDot(eventId, date, kind, event = null) {
   dot.dataset.kind = kind;
   dot.dataset.date = date;
   dot.style.left = `${xForDate(date) - 8}px`;
-  if (kind === "live" && event) attachLivePreview(dot, event);
+  if (kind === "live" && event?.hasPreview !== false) attachLivePreview(dot, event);
   if (kind === "era" && event) attachEraPreview(dot, event);
-  if (kind === "member" && event) attachMemberPreview(dot, event);
+  if (kind === "member" && event?.hasPreview !== false) attachMemberPreview(dot, event);
   return dot;
 }
 

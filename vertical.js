@@ -39,6 +39,7 @@ const releases = [
   ["sakura", "2025-10-29", "Unhappy birthday構文", ["Unhappy birthday構文", "Alter ego", "木枯らしは泣かない", "青空が見えるまで", "I will be", "Buddies (English Version)", "夜空で一番輝いてる星の名前を僕は知らない"]],
   ["sakura", "2026-03-11", "The growing up train", ["The growing up train", "光源", "ドライフルーツ", "キスが苦い", "くらげらしく", "Sunny side up", "僕は向いてない"]],
   ["sakura", "2026-06-10", "Lonesome rabbit / What's “KAZOKU”?", ["Lonesome rabbit", "What's “KAZOKU”?", "コインランドリー", "We got your back", "狼たちよ", "各駅停車", "恵まれ過ぎて"], undefined, true],
+  ["sakura", "2026-10-14", "愛MUST BE", ["愛MUST BE", "元凶", "自称バレエダンサー", "アベセン", "1mmも飛ばない鳥", "あの日の私で", "I’m the law"]],
 ].map(([era, date, title, tracks, format, limitedCover], index) => ({ type: "release", era, date, title, tracks, format, limitedCover, id: `release-${index}` }));
 
 const albums = [
@@ -74,12 +75,15 @@ const liveEvents = [
   ["2024-11-23", "2024-11-24", "櫻坂46 4th YEAR ANNIVERSARY LIVE"],
   ["2025-04-26", "2025-08-24", "櫻坂46 5th TOUR 2025 Addiction"],
   ["2026-04-11", "2026-04-12", "liveEvents.stadium"],
-].map(([date, end, title, titleKey], index) => ({
+  ["2026-07-23", "2026-08-30", "liveEvents.arenaTour2026"],
+  ["2026-11-14", "2026-11-15", "liveEvents.anniversary6", undefined, false],
+].map(([date, end, title, titleKey, hasPreview = true], index) => ({
   type: "live",
   date,
   end,
   ...(title?.startsWith("liveEvents.") ? { titleKey: title } : { title }),
   ...(titleKey ? { titleKey } : {}),
+  hasPreview,
   id: `live-${index}`,
 }));
 
@@ -117,7 +121,8 @@ const memberEvents = [
   ["2025-04-16", "memberEvents.m20250416"],
   ["2026-02-28", "memberEvents.m20260228"],
   ["2026-05-13", "memberEvents.m20260513"],
-].map(([date, titleKey, kind = "member"], index) => ({ type: "member", date, titleKey, kind, id: `member-${index}` }));
+  ["2026-09-30", "memberEvents.m20260930"],
+].map(([date, titleKey, kind = "member", hasPreview = true], index) => ({ type: "member", date, titleKey, kind, hasPreview, id: `member-${index}` }));
 
 const timeline = document.querySelector("#verticalTimeline");
 const template = document.querySelector("#eventTemplate");
@@ -128,7 +133,7 @@ const bgCurrent = document.querySelector(".page-bg-current");
 const bgNext = document.querySelector(".page-bg-next");
 
 const startDate = new Date("2015-08-01T00:00:00");
-const endDate = new Date("2026-07-01T00:00:00");
+const endDate = new Date("2026-12-01T00:00:00");
 const dayMs = 24 * 60 * 60 * 1000;
 const pixelsPerDay = 2.7;
 const edgePadding = 140;
@@ -201,8 +206,10 @@ function scrollToDate(date) {
   window.scrollTo({ top: Math.max(0, target), behavior: "smooth" });
 }
 
-function openModal(src, alt) {
-  modalImage.src = src;
+function openModal(src, alt, fallbackSrc) {
+  window.loadLocalImage(modalImage, src, () => {
+    if (fallbackSrc) window.loadLocalImage(modalImage, fallbackSrc);
+  });
   modalImage.alt = alt;
   modal.classList.add("is-open");
   modal.setAttribute("aria-hidden", "false");
@@ -210,13 +217,13 @@ function openModal(src, alt) {
 
 function loadCover(slot, src, alt) {
   const image = new Image();
-  image.src = src;
   image.alt = alt;
   image.addEventListener("click", () => openModal(image.currentSrc || image.src, alt));
   image.onload = () => {
     slot.textContent = "";
     slot.appendChild(image);
   };
+  window.loadLocalImage(image, src);
 }
 
 function attachLivePreview(dot, event) {
@@ -225,7 +232,7 @@ function attachLivePreview(dot, event) {
   dot.addEventListener("click", (clickEvent) => {
     clickEvent.preventDefault();
     clickEvent.stopPropagation();
-    openModal(src, eventTitle(event));
+    openModal(src, eventTitle(event), `assets/covers/${compactDate(event.end)}-live.jpg`);
   });
 }
 
@@ -298,7 +305,7 @@ function renderEvent(event) {
   row.dataset.date = event.date;
   row.dataset.type = event.type === "member" && event.kind === "era" ? "era" : event.type === "release" ? event.era : event.type;
   row.classList.add(`is-${event.type === "release" ? event.era : event.type}`);
-  if (event.type === "live") attachLivePreview(row.querySelector(".event-dot"), event);
+  if (event.type === "live" && event.hasPreview !== false) attachLivePreview(row.querySelector(".event-dot"), event);
   if (event.type === "live" && event.end && event.end !== event.date) {
     const segment = document.createElement("span");
     const startY = yForDate(event.date);
@@ -311,7 +318,7 @@ function renderEvent(event) {
   if (event.type === "member" && event.kind === "era") {
     row.classList.add("is-era");
     attachEraPreview(row.querySelector(".event-dot"), event);
-  } else if (event.type === "member") {
+  } else if (event.type === "member" && event.hasPreview !== false) {
     attachMemberPreview(row.querySelector(".event-dot"), event);
   }
 
